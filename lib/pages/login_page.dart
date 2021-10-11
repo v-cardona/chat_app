@@ -1,3 +1,4 @@
+import 'package:chat_app/helpers/mostrar_alerta.dart';
 import 'package:chat_app/services/auth_services.dart';
 import 'package:chat_app/widgets/boton_azul.dart';
 import 'package:chat_app/widgets/custom_input.dart';
@@ -77,10 +78,19 @@ class _FormState extends State<_Form> {
             text: 'Login',
             onPressed: authService.autenticando
                 ? () {}
-                : () {
+                : () async {
                     FocusScope.of(context).unfocus();
-                    authService.login(emailController.text.trim(),
+                    final loginOk = await authService.login(
+                        emailController.text.trim(),
                         passwordController.text.trim());
+                    if (loginOk) {
+                      // TODO: Conectar a nuestro socket server
+                      Navigator.pushReplacementNamed(context, 'usuarios');
+                    } else {
+                      // Mostara alerta
+                      mostrarAlerta(context, 'Login incorrecto',
+                          'Revise sus credenciales nuevamente');
+                    }
                   },
           ),
         ],
