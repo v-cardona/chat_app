@@ -14,19 +14,19 @@ class _UsuariosPageState extends State<UsuariosPage> {
   final usuarios = [
     Usuario(
       email: 'maria@test.com',
-      name: 'Maria',
+      nombre: 'Maria',
       online: true,
       uid: '1',
     ),
     Usuario(
       email: 'melissa@test.com',
-      name: 'Melissa',
+      nombre: 'Melissa',
       online: true,
       uid: '2',
     ),
     Usuario(
       email: 'fer@test.com',
-      name: 'Fer',
+      nombre: 'Fer',
       online: false,
       uid: '3',
     ),
@@ -109,10 +109,10 @@ class UsuarioListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(usuario.name),
+      title: Text(usuario.nombre),
       subtitle: Text(usuario.email),
       leading: CircleAvatar(
-        child: Text(usuario.name.substring(0, 2)),
+        child: Text(usuario.nombre.substring(0, 2)),
         backgroundColor: Colors.blue[100],
       ),
       trailing: Container(

@@ -1,8 +1,10 @@
+import 'package:chat_app/services/auth_services.dart';
 import 'package:chat_app/widgets/boton_azul.dart';
 import 'package:chat_app/widgets/custom_input.dart';
 import 'package:chat_app/widgets/labels.dart';
 import 'package:chat_app/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -47,10 +49,12 @@ class _Form extends StatefulWidget {
 }
 
 class _FormState extends State<_Form> {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    final emailController = TextEditingController();
-    final passwordController = TextEditingController();
+    final authService = Provider.of<AuthService>(context, listen: false);
 
     return Container(
       margin: const EdgeInsets.only(top: 40),
@@ -71,7 +75,13 @@ class _FormState extends State<_Form> {
           ),
           BotonAzul(
             text: 'Login',
-            onPressed: () {},
+            onPressed: authService.autenticando
+                ? () {}
+                : () {
+                    FocusScope.of(context).unfocus();
+                    authService.login(emailController.text.trim(),
+                        passwordController.text.trim());
+                  },
           ),
         ],
       ),
