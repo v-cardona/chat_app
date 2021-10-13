@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:chat_app/services/chat_service.dart';
 import 'package:chat_app/widgets/chat_message.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -20,6 +22,8 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
+    final chatService = Provider.of<ChatService>(context);
+    final usuarioPara = chatService.usuarioPara;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -29,18 +33,18 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           children: [
             CircleAvatar(
               child: Text(
-                'Te',
-                style: TextStyle(fontSize: 12),
+                usuarioPara.nombre.substring(0, 2),
+                style: const TextStyle(fontSize: 12),
               ),
               backgroundColor: Colors.blue[100],
               maxRadius: 14,
             ),
-            SizedBox(
+            const SizedBox(
               height: 3,
             ),
             Text(
-              'Melissa',
-              style: TextStyle(
+              usuarioPara.nombre,
+              style: const TextStyle(
                 color: Colors.black87,
                 fontSize: 12,
               ),
@@ -53,13 +57,13 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
           children: [
             Flexible(
               child: ListView.builder(
-                physics: BouncingScrollPhysics(),
+                physics: const BouncingScrollPhysics(),
                 itemCount: messages.length,
                 itemBuilder: (context, index) => messages[index],
                 reverse: true,
               ),
             ),
-            Divider(
+            const Divider(
               height: 1,
             ),
             Container(
@@ -76,7 +80,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   Widget _inputChat() {
     return SafeArea(
       child: Container(
-        margin: EdgeInsets.symmetric(horizontal: 8),
+        margin: const EdgeInsets.symmetric(horizontal: 8),
         child: Row(
           children: [
             Flexible(
@@ -85,20 +89,20 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                 onSubmitted: _handleSubmit,
                 onChanged: (actualTexto) {
                   setState(() {
-                    estaEscribiendo = actualTexto.trim().length > 0;
+                    estaEscribiendo = actualTexto.trim().isNotEmpty;
                   });
                 },
-                decoration: InputDecoration.collapsed(
+                decoration: const InputDecoration.collapsed(
                   hintText: 'Enviar mensaje',
                 ),
                 focusNode: focusNode,
               ),
             ),
             Container(
-              margin: EdgeInsets.symmetric(horizontal: 4),
+              margin: const EdgeInsets.symmetric(horizontal: 4),
               child: Platform.isAndroid
                   ? Container(
-                      margin: EdgeInsets.symmetric(horizontal: 4),
+                      margin: const EdgeInsets.symmetric(horizontal: 4),
                       child: IconTheme(
                         data: IconThemeData(color: Colors.blue[400]),
                         child: IconButton(
@@ -107,14 +111,14 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
                               : null,
                           highlightColor: Colors.transparent,
                           splashColor: Colors.transparent,
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.send,
                           ),
                         ),
                       ),
                     )
                   : CupertinoButton(
-                      child: Text('Enviar'),
+                      child: const Text('Enviar'),
                       onPressed: estaEscribiendo
                           ? () => _handleSubmit(textController.text.trim())
                           : null,
