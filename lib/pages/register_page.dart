@@ -1,8 +1,11 @@
+import 'package:chat_app/helpers/mostrar_alerta.dart';
+import 'package:chat_app/services/auth_services.dart';
 import 'package:chat_app/widgets/boton_azul.dart';
 import 'package:chat_app/widgets/custom_input.dart';
 import 'package:chat_app/widgets/labels.dart';
 import 'package:chat_app/widgets/logo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({Key? key}) : super(key: key);
@@ -52,6 +55,7 @@ class _FormState extends State<_Form> {
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
     final nameController = TextEditingController();
+    final authService = Provider.of<AuthService>(context, listen: false);
 
     return Container(
       margin: const EdgeInsets.only(top: 40),
@@ -76,8 +80,25 @@ class _FormState extends State<_Form> {
             isPassword: true,
           ),
           BotonAzul(
-            text: 'Login',
-            onPressed: () {},
+            text: 'Crear cuenta',
+            onPressed: authService.autenticando
+                ? () {}
+                : () async {
+                    FocusScope.of(context).unfocus();
+                    final registerOk = await authService.register(
+                      emailController.text.trim(),
+                      passwordController.text.trim(),
+                      nameController.text.trim(),
+                    );
+                    if (registerOk == true) {
+                      // porque register ok devuevle true o string con el error
+                      // TODO: Conectar a nuestro socket server
+                      Navigator.pushReplacementNamed(context, 'usuarios');
+                    } else {
+                      // Mostara alerta
+                      mostrarAlerta(context, 'Registro incorrecto', registerOk);
+                    }
+                  },
           ),
         ],
       ),
