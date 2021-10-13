@@ -8,7 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/material.dart';
 
 class AuthService with ChangeNotifier {
-  Usuario? usuario;
+  late Usuario usuario;
   bool _autenticando = false;
   // Create storage
   final _storage = const FlutterSecureStorage();
@@ -30,7 +30,7 @@ class AuthService with ChangeNotifier {
     return token;
   }
 
-  static Future<void> deleteToken(String token) async {
+  static Future<void> deleteToken() async {
     const _storage = FlutterSecureStorage();
     await _storage.delete(key: 'token');
   }
@@ -100,7 +100,6 @@ class AuthService with ChangeNotifier {
       },
     );
 
-    autenticando = false;
     if (resp.statusCode == 200) {
       final loginResponse = loginResponseFromJson(resp.body);
       usuario = loginResponse.usuario;
@@ -108,8 +107,8 @@ class AuthService with ChangeNotifier {
       await _guardarToken(loginResponse.token);
       return true;
     } else {
-      final respBody = jsonDecode(resp.body);
-      return respBody['msg'];
+      logout(token);
+      return false;
     }
   }
 
