@@ -1,6 +1,8 @@
 import 'dart:io';
 
+import 'package:chat_app/services/auth_services.dart';
 import 'package:chat_app/services/chat_service.dart';
+import 'package:chat_app/services/socket_service.dart';
 import 'package:chat_app/widgets/chat_message.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -17,13 +19,43 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
   final textController = TextEditingController();
   final focusNode = FocusNode();
   bool estaEscribiendo = false;
+  late ChatService chatService;
+  late SocketService socketService;
+  late AuthService authService;
 
   List<ChatMessage> messages = [];
 
   @override
+  void initState() {
+    super.initState();
+    chatService = Provider.of<ChatService>(context, listen: false);
+    socketService = Provider.of<SocketService>(context, listen: false);
+    authService = Provider.of<AuthService>(context, listen: false);
+
+    socketService.socket
+        .on('mensaje-personal', (payload) => _escucharMensaje(payload));
+  }
+
+  void _escucharMensaje(dynamic payload) {
+    ChatMessage message = ChatMessage(
+      texto: payload['mensaje'],
+      uid: payload['de'],
+      animationController: AnimationController(
+        vsync: this,
+        duration: const Duration(milliseconds: 300),
+      ),
+    );
+    setState(() {
+      messages.insert(0, message);
+    });
+
+    message.animationController.forward();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final chatService = Provider.of<ChatService>(context);
     final usuarioPara = chatService.usuarioPara;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -150,13 +182,20 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
     setState(() {
       estaEscribiendo = false;
     });
+
+    socketService.emit('mensaje-personal', {
+      'de': authService.usuario.uid,
+      'para': chatService.usuarioPara.uid,
+      'mensaje': texto
+    });
   }
 
   @override
   void dispose() {
-    super.dispose();
     for (var message in messages) {
       message.animationController.dispose();
     }
+    socketService.socket.off('mensaje-personal');
+    super.dispose();
   }
 }
