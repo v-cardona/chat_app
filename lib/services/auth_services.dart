@@ -46,7 +46,7 @@ class AuthService with ChangeNotifier {
     final resp = await http.post(
       Uri.parse('${Environments.apiUrl}/login'),
       body: jsonEncode(data),
-      headers: {'Content-Type': 'applications/json'},
+      headers: {'Content-Type': 'application/json'},
     );
 
     autenticando = false;
@@ -73,7 +73,7 @@ class AuthService with ChangeNotifier {
     final resp = await http.post(
       Uri.parse('${Environments.apiUrl}/login/new'),
       body: jsonEncode(data),
-      headers: {'Content-Type': 'applications/json'},
+      headers: {'Content-Type': 'application/json'},
     );
 
     autenticando = false;
@@ -95,7 +95,7 @@ class AuthService with ChangeNotifier {
     final resp = await http.get(
       Uri.parse('${Environments.apiUrl}/login/renew'),
       headers: {
-        'Content-Type': 'applications/json',
+        'Content-Type': 'application/json',
         'x-token': token,
       },
     );
